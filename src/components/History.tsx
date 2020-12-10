@@ -20,7 +20,7 @@ const History = ({ showInteraction }: { showInteraction: Function }) => {
       title: 'Probability',
       dataIndex: 'probability',
       key: 'probability',
-      render: (probability: number) => <p>{probability}%</p>,
+      render: (probability: number) => <div>{probability}%</div>,
     },
     {
       title: 'Status',

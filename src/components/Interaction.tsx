@@ -31,6 +31,7 @@ const Interaction = ({
   historyProtein1: string
   historyProtein2: string
 }) => {
+  const [isError, setIsError] = useState(false)
   const [isShowResult, setIsShowResult] = useState(false)
   const [protein1, setProtein1] = useState('')
   const [protein2, setProtein2] = useState('')
@@ -44,14 +45,15 @@ const Interaction = ({
       protein1: values.protein1,
       protein2: values.protein2,
     })
-    let { name, probability } = result.data
-    setProtein1(values.protein1)
-    setProtein1Name(name.protein1)
-    setProtein2Name(name.protein2)
-    setProtein2(values.protein2)
-    setInteraction(Math.round(probability[0][1] * 1000) / 10)
-    setIsShowResult(true)
-    if (result.status === 200) {
+    let { name, probability, status } = result.data
+    if (status === '200') {
+      setIsError(false)
+      setProtein1(values.protein1)
+      setProtein1Name(name.protein1)
+      setProtein2Name(name.protein2)
+      setProtein2(values.protein2)
+      setInteraction(Math.round(probability[0][1] * 1000) / 10)
+      setIsShowResult(true)
       if (localStorage.getItem('history') !== null) {
         let data = localStorage.getItem('history')
         if (data) {
@@ -79,6 +81,9 @@ const Interaction = ({
           ])
         )
       }
+    } else {
+      setIsError(true)
+      setIsShowResult(false)
     }
   }
   useEffect(() => {
@@ -94,8 +99,8 @@ const Interaction = ({
 
   const onFill = () => {
     form.setFieldsValue({
-      protein1: 'NP_061187.2',
-      protein2: 'NP_057694.2',
+      protein1: 'AAQ89084.1',
+      protein2: 'NP_001009905.1',
     })
   }
 
@@ -140,6 +145,14 @@ const Interaction = ({
           </Button>
         </Form.Item>
       </Form>
+      {!isError ? null : (
+        <>
+          <div className='spacing' />
+          <div className='center'>
+            <p className='error'>Protein is invalid</p>
+          </div>
+        </>
+      )}
       {!isShowResult ? null : (
         <>
           <div className='spacing' />
