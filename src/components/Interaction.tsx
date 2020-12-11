@@ -1,9 +1,12 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable implicit-arrow-linebreak */
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Button, Progress, Row, Col } from 'antd'
+import { Form, Input, Button, Progress, Row, Col, Menu, Dropdown } from 'antd'
 import axios from 'axios'
+import { DownOutlined } from '@ant-design/icons'
 
 const layout = {
   labelCol: {
@@ -31,6 +34,7 @@ const Interaction = ({
   historyProtein1: string
   historyProtein2: string
 }) => {
+  const [visible, setVisible] = useState(false)
   const [isError, setIsError] = useState(false)
   const [isShowResult, setIsShowResult] = useState(false)
   const [protein1, setProtein1] = useState('')
@@ -89,6 +93,7 @@ const Interaction = ({
   useEffect(() => {
     if (isShowHistory) {
       onFinish({ protein1: historyProtein1, protein2: historyProtein2 })
+      onFill({ protein1: historyProtein1, protein2: historyProtein2 })
       showHistory(false)
     }
   }, [isShowHistory])
@@ -97,12 +102,50 @@ const Interaction = ({
     form.resetFields()
   }
 
-  const onFill = () => {
+  const onFill = ({
+    protein1 = 'NP_000519.2',
+    protein2 = 'NP_064632.2',
+  }: {
+    protein1?: string
+    protein2?: string
+  }) => {
     form.setFieldsValue({
-      protein1: 'AAQ89084.1',
-      protein2: 'NP_001009905.1',
+      protein1,
+      protein2,
     })
   }
+
+  const handleMenuClick = (e: any) => {
+    if (e.key === '1') {
+      onFill({ protein1: 'NP_000519.2', protein2: 'NP_064632.2' })
+      setVisible(false)
+    }
+    if (e.key === '2') {
+      onFill({ protein1: 'NP_001349.2', protein2: 'NP_006237.1' })
+      setVisible(false)
+    }
+    if (e.key === '3') {
+      onFill({ protein1: 'NP_000519.2', protein2: 'NP_003810.1' })
+      setVisible(false)
+    }
+    if (e.key === '4') {
+      onFill({ protein1: 'NP_061187.2', protein2: 'NP_057694.2' })
+      setVisible(false)
+    }
+  }
+
+  const handleVisibleChange = (flag: any) => {
+    setVisible(flag)
+  }
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key='1'>Example 1</Menu.Item>
+      <Menu.Item key='2'>Example 2</Menu.Item>
+      <Menu.Item key='3'>Example 3</Menu.Item>
+      <Menu.Item key='4'>Example 4</Menu.Item>
+    </Menu>
+  )
 
   return (
     <>
@@ -114,7 +157,7 @@ const Interaction = ({
         style={{ width: '50%', margin: '0 auto' }}>
         <Form.Item
           name='protein1'
-          label='Protein 1'
+          label='o=pờ rô tê in'
           rules={[
             {
               required: true,
@@ -140,8 +183,17 @@ const Interaction = ({
           <Button htmlType='button' onClick={onReset}>
             Reset
           </Button>
-          <Button type='link' htmlType='button' onClick={onFill}>
-            Example
+          <Button>
+            <Dropdown
+              overlay={menu}
+              onVisibleChange={handleVisibleChange}
+              visible={visible}>
+              <a
+                className='ant-dropdown-link'
+                onClick={(e) => e.preventDefault()}>
+                Example <DownOutlined />
+              </a>
+            </Dropdown>
           </Button>
         </Form.Item>
       </Form>
